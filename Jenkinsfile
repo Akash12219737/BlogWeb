@@ -29,7 +29,10 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS}",
                                                       usernameVariable: 'DOCKER_USERNAME',
                                                       passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat "docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%"
+                        bat """
+                            docker logout
+                            docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+                        """
                     }
                 }
             }
@@ -43,12 +46,29 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Docker Container Locally') {
             steps {
                 script {
-                    bat "docker stop %CONTAINER_NAME% || exit 0"
-                    bat "docker rm %CONTAINER_NAME% || exit 0"
-                    bat "docker run -d -p %HOST_PORT%:80 --name %CONTAINER_NAME% %DOCKER_IMAGE%"
+                    bat """
+                        docker stop %CONTAINER_NAME% || echo No container to stop
+                        docker rm %CONTAINER_NAME% || echo No container to remove
+                        docker run -d -p %HOST_PORT%:80 --name %CONTAINER_NAME% %DOCKER_IMAGE%
+                    """
+                }
+            }
+        }
+
+        // ✅ New Stage: Deploy to Kubernetes
+        stage('Deploy to Kubernetes (EKS)') {
+            steps {
+                script {
+                    bat """
+                        echo Deploying to EKS Cluster...
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                        kubectl rollout status deployment/endtermfrontend-deployment
+                        kubectl get all
+                    """
                 }
             }
         }
