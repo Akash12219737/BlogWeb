@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "abhinaprakash783/endtermfrontend"
+        DOCKER_IMAGE = "akash577/endtermfrontend"
         DOCKER_HUB_CREDENTIALS = "docker-hub-creds-v7"
         CONTAINER_NAME = "endtermfrontend"
         HOST_PORT = "8082"
@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/abhinav12222363/endterm'
+                git branch: 'main', url: 'https://github.com/akash577/endterm'
             }
         }
 
