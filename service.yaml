@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: endtermfrontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: endtermfrontend
+  ports:
+  - port: 80
+    targetPort: 80

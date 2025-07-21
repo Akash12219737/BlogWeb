@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: endtermfrontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: endtermfrontend
+  template:
+    metadata:
+      labels:
+        app: endtermfrontend
+    spec:
+      containers:
+      - name: endtermfrontend
+        image: abhinaprakash783/endtermfrontend
+        ports:
+        - containerPort: 80
